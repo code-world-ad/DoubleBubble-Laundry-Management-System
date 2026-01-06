@@ -445,6 +445,54 @@ Suggested future improvements:
 
 ---
 
+ ## 🏛 Architecture
+ 
+ The system follows a classic **3-layer web architecture**: UI (templates), API/Business Logic (Flask views + service modules), and Data (SQLite).
+ 
+ ```mermaid
+ graph TD
+ 
+   subgraph Client
+     A[Browser]
+   end
+ 
+   subgraph WebApp[Flask Web App (main.py)]
+     B1[Auth & Session<br/>Sign_in_cust.py<br/>Log_in_cust.py<br/>Log_in_Owner.py]
+     B2[Customer Flows<br/>Laundry Cart.html<br/>DeliveryStatusCust.html]
+     B3[Owner Flows<br/>own_home.html<br/>own_sod.html<br/>report.html]
+     B4[Business Logic<br/>Manipulation_of_cart_edited.py<br/>CustSOD.py<br/>OwnerSOD.py<br/>monthrep.py<br/>addresses.py]
+   end
+ 
+   subgraph DB[SQLite - customer_db.sqlite]
+     C1[(customers)]
+     C2[(orders)]
+     C3[(order_items)]
+     C4[(cart)]
+     C5[(addresses)]
+   end
+ 
+   A <-- HTTP + JSON/HTML --> WebApp
+ 
+   WebApp --> C1
+   WebApp --> C2
+   WebApp --> C3
+   WebApp --> C4
+   WebApp --> C5
+ ```
+ 
+ **Flow summary**
+ - The **browser** loads HTML templates and uses JavaScript + Fetch API to call Flask JSON endpoints.
+ - **Flask routes in `main.py`** delegate to specialized modules:
+   - Authentication: `Sign_in_cust.py`, `Log_in_cust.py`, `Log_in_Owner.py`
+   - Cart & orders: `Manipulation_of_cart_edited.py`
+   - Customer order tracking: `CustSOD.py`
+   - Owner delivery management: `OwnerSOD.py`
+   - Reporting: `monthrep.py`
+   - Saved addresses: `addresses.py`
+ - All persistent state is stored in **SQLite** tables (`customers`, `orders`, `order_items`, `cart`, `addresses`), with business rules enforced both in code and via DB constraints.
+ 
+ ---
+ 
 
 ## 🙌 Acknowledgements
 
