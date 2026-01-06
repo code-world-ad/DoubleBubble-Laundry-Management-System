@@ -445,45 +445,56 @@ Suggested future improvements:
 
 ---
 
- ## 🏛 Architecture
- 
- The system follows a classic **3-layer web architecture**: UI (templates), API/Business Logic (Flask views + service modules), and Data (SQLite).
- 
-```mermaid
-flowchart TD
+## 🏛 Architecture
 
-  A[Browser] -->|HTTP + JSON/HTML| B[Flask App<br/>main.py]
+The system follows a classic **3-layer web architecture**: UI (templates), API/Business Logic (Flask views + service modules), and Data (SQLite).
 
-  subgraph Services
-    C1[Auth & Sessions<br/>Sign_in_cust.py<br/>Log_in_cust.py<br/>Log_in_Owner.py]
-    C2[Customer Flows<br/>Laundry Cart.html<br/>DeliveryStatusCust.html<br/>cust_home_page.html]
-    C3[Owner Flows<br/>own_home.html<br/>own_sod.html<br/>report.html]
-    C4[Business Logic<br/>Manipulation_of_cart_edited.py<br/>CustSOD.py<br/>OwnerSOD.py<br/>monthrep.py<br/>addresses.py]
-  end
+High-level component diagram:
 
-  subgraph DB[(SQLite: customer_db.sqlite)]
-    D1[(customers)]
-    D2[(orders)]
-    D3[(order_items)]
-    D4[(cart)]
-    D5[(addresses)]
-  end
-
-  B --> C1
-  B --> C2
-  B --> C3
-  B --> C4
-
-  C1 --> D1
-  C2 --> D2
-  C2 --> D3
-  C2 --> D4
-  C4 --> D2
-  C4 --> D3
-  C4 --> D5
+```text
++-----------------------------+
+|         Browser             |
+|  - HTML templates           |
+|  - CSS, JS, Fetch API      |
++--------------+--------------+
+               |
+               | HTTP (HTML & JSON)
+               v
++--------------+--------------+
+|        Flask App            |
+|          main.py            |
+|  - Routing & sessions       |
+|  - REST/JSON APIs           |
+|  - Renders templates        |
++--------------+--------------+
+      |           |       
+      |           | calls
+      v           v
+  +--------+   +---------------------------+
+  | Auth   |   |  Business Logic Services |
+  |        |   |  - Cart & Orders         |
+  | Sign_in_cust.py        (Manipulation_of_cart_edited.py) |
+  | Log_in_cust.py         - Customer SOD (CustSOD.py)      |
+  | Log_in_Owner.py        - Owner SOD (OwnerSOD.py)        |
+  +--------+   |  - Reporting (monthrep.py)                 |
+               |  - Addresses (addresses.py)                |
+               +---------------------------+
+                              |
+                              | SQL (via sqlite3)
+                              v
+                    +-------------------------+
+                    |  SQLite Database        |
+                    |  customer_db.sqlite     |
+                    |                         |
+                    |  - customers            |
+                    |  - orders               |
+                    |  - order_items          |
+                    |  - cart                 |
+                    |  - addresses            |
+                    +-------------------------+
 ```
- 
- **Flow summary**
+
+**Flow summary**
  - The **browser** loads HTML templates and uses JavaScript + Fetch API to call Flask JSON endpoints.
  - **Flask routes in `main.py`** delegate to specialized modules:
    - Authentication: `Sign_in_cust.py`, `Log_in_cust.py`, `Log_in_Owner.py`
