@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<title>Login/SignUp</title>
+<style>
+    /* Your CSS styles */
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        background: url('static/images/Leonardo_Phoenix.jpg') center/cover no-repeat;
+        background-size: cover;
+        width: 100%;
+        height: 100%;
+        color: black;
+        background-repeat: no-repeat;
+        background-position: center;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+
+    .container {
+        width: 50%;
+        margin: 20px auto;
+        padding: 20px;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        opacity: inherit;
+        padding-bottom: 60px; /* Extra padding to avoid overlap */
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #fff;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+
+    form {
+        margin-top: 20px;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: white;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="username"],
+    input[type="password"] {
+        width: 70%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        color: white;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    input[type="submit"] {
+        padding: 10px 20px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-align: center;
+        position: relative;
+        margin-top: 20px;
+    }
+
+    input[type="submit"]:hover {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .auth-option {
+        display: inline-block;
+        margin-right: 10px;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Portal Login</h1>
+        <form id="authForm" action="#" method="post">
+            <div>
+                <label class="auth-option" for="Ownerlogin">
+                    <input type="radio" id="Ownerlogin" name="authOption" value="ownlogin">
+                    Owner Login
+                </label>
+                <label class="auth-option" for="loginRadio">
+                    <input type="radio" id="loginRadio" name="authOption" value="login" checked>
+                    Customer Login
+                </label>
+                <label class="auth-option" for="signupRadio">
+                    <input type="radio" id="signupRadio" name="authOption" value="signup">
+                    Customer Sign Up
+                </label>
+            </div>
+            <div id="OwnerLoginFields" style="display: none;">
+                <label for="ownuser">Owner Username</label>
+                <input type="username" id="ownuser" name="ownuser" required>
+                <label for="OwnPassword">Password</label>
+                <input type="password" id="OwnPassword" name="OwnPassword" required>
+            </div>
+            <div id="signInFields">
+                <label for="loginEmail">Username</label>
+                <input type="email" id="loginEmail" name="loginEmail" required>
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" name="loginPassword" required>
+            </div>
+            <div id="signUpFields" style="display: none;">
+                <label for="name">Customer Name</label>
+                <input type="text" id="name" name="name" maxlength="100" pattern="[a-zA-Z\s]+"
+                       title="Name can only contain letters and spaces" required>
+                <label for="email">Username</label>
+                <input type="email" id="email" name="email" maxlength="100" required>
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" name="phone" maxlength="10" pattern="[0-9]{10}"
+                       title="Please enter a valid 10-digit phone number" required>
+                <label for="signupPassword">Password</label>
+                <input type="password" id="signupPassword" name="signupPassword" required>
+            </div>
+            <input type="submit" id="submitOwnerBtn" value="Login" style="display: none;">
+            <input type="submit" id="submitBtn" value="Login">
+            <input type="submit" id="submitSignupBtn" value="Sign Up" style="display: none;">
+        </form>
+    </div>
+    <footer>
+        <p>&copy; DoubleBubble</p>
+    </footer>
+    
+    <script>
+        // Function to toggle between Sign Up and Login forms
+        function toggleForms() {
+            var OwnerLoginFields = document.getElementById('OwnerLoginFields')
+            var signInFields = document.getElementById('signInFields');
+            var signUpFields = document.getElementById('signUpFields');
+            var submitBtn = document.getElementById('submitBtn');
+            var submitOwnerBtn = document.getElementById('submitOwnerBtn')
+            var submitSignupBtn = document.getElementById('submitSignupBtn');
+
+            if (document.getElementById('signupRadio').checked) {
+                signInFields.style.display = 'none';
+                signUpFields.style.display = 'block';
+                OwnerLoginFields.style.display = 'none';
+                submitBtn.style.display = 'none';
+                submitOwnerBtn.style.display = 'none';
+                submitSignupBtn.style.display = 'inline-block';
+            } else
+            if (document.getElementById('loginRadio').checked) {
+                signInFields.style.display = 'block';
+                signUpFields.style.display = 'none';
+                OwnerLoginFields.style.display = 'none';
+                submitBtn.style.display = 'inline-block';
+                submitOwnerBtn.style.display = 'none';
+                submitSignupBtn.style.display = 'none';
+            }
+            else{
+                signInFields.style.display = 'none';
+                signUpFields.style.display = 'none';
+                OwnerLoginFields.style.display = 'block';
+                submitBtn.style.display = 'none';
+                submitOwnerBtn.style.display = 'inline-block';
+                submitSignupBtn.style.display = 'none';
+            }
+        }
+
+        // Function to handle form submission
+        document.querySelectorAll('input[name="authOption"]').forEach(function(radio) {
+            radio.addEventListener('change', toggleForms);
+        });
+
+        document.getElementById('submitBtn').addEventListener('click', function(event) {
+            event.preventDefault();
+            var formData = new FormData(document.getElementById('authForm'));
+
+            // Handle login
+            var email = formData.get('loginEmail');
+            var password = formData.get('loginPassword');
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/login', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.login_status === 1) {
+                                alert(response.message || 'Login successful');
+                                window.location.href = '/cust_home_page';
+                            } else {
+                                alert(response.message || 'Login failed. Please check your credentials.');
+                            }
+                        } catch (e) {
+                            alert('Error parsing server response. Please try again.');
+                            console.error('JSON parse error:', e);
+                        }
+                    } else {
+                        alert('An error occurred during login. Status: ' + xhr.status);
+                    }
+                }
+            };
+
+            var encodedData = new URLSearchParams(formData).toString();
+            xhr.send(encodedData);
+        });
+
+        document.getElementById('submitSignupBtn').addEventListener('click', function(event) {
+            event.preventDefault();
+
+            // Validate form inputs
+            var name = document.getElementById('name').value.trim();
+            var email = document.getElementById('email').value.trim();
+            var phone = document.getElementById('phone').value.trim();
+            var password = document.getElementById('signupPassword').value;
+
+            // Name validation
+            if (name.length < 2 || name.length > 100) {
+                alert('Name must be between 2 and 100 characters.');
+                return;
+            }
+
+            // Email validation
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            // Phone validation
+            var phoneRegex = /^[0-9]{10}$/;
+            if (!phoneRegex.test(phone)) {
+                alert('Phone number must be exactly 10 digits.');
+                return;
+            }
+
+            // Password validation
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long.');
+                return;
+            }
+
+            var formData = new FormData(document.getElementById('authForm'));
+
+            // Handle sign up
+            var data = {
+                name: formData.get('name'),
+                username: formData.get('email'),
+                phone: formData.get('phone'),
+                password: formData.get('signupPassword')
+            };
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/signup', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        alert('Signup successful');
+                        window.location.href = '/cust_home_page';
+                    } else {
+                        alert('An error occurred during signup.');
+                    }
+                }
+            };
+            xhr.send(JSON.stringify(data));
+        });
+
+        document.getElementById('submitOwnerBtn').addEventListener('click', function(event) {
+            event.preventDefault();
+            var formData = new FormData(document.getElementById('authForm'));
+
+            // Handle login
+            var email = formData.get('ownuser');
+            var password = formData.get('OwnPassword');
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/login', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.login_status === 1) {
+                                alert(response.message || 'Owner login successful');
+                                window.location.href = '/own_home_page';
+                            } else {
+                                alert(response.message || 'Owner login failed. Please check your credentials.');
+                            }
+                        } catch (e) {
+                            alert('Error parsing server response. Please try again.');
+                            console.error('JSON parse error:', e);
+                        }
+                    } else {
+                        alert('An error occurred during login. Status: ' + xhr.status);
+                    }
+                }
+            };
+
+            var encodedData = new URLSearchParams(formData).toString();
+            xhr.send(encodedData);
+        });
+    </script>
+</body>
+</html>

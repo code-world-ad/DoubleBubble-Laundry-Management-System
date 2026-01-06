@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laundry Management System</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: url('/static/images/output.jpg') center/cover no-repeat;
+            background-size: cover;
+            width: 100%;
+            min-height: 100vh;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .page-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Keep for horizontal centering of direct children */
+            width: 100%;
+        }
+        header {
+            width: 100%;
+            min-height: 200px; /* Give header enough space for content */
+            position: relative;
+            box-sizing: border-box;
+            padding-top: 20px; /* Add some padding at the top */
+            padding-bottom: 20px; /* Add some padding at the bottom */
+        }
+
+
+        .company-name {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .welcome-text {
+            position: absolute;
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust to truly center */
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px; /* Add padding to the background */
+            border-radius: 8px; /* Rounded corners for the background */
+        }
+
+        .sign-out-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .sign-out-btn:hover {
+            background: rgba(255, 0, 0, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        form {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 1cm;
+        }
+        form, .about {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: auto;
+        }
+
+        button[type="submit"] {
+            border: none;
+            font-family: cursive;
+            font-style: inherit;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            margin: 20px 0;
+            padding: 15px;
+            color: #fff;
+            border-radius: 25px;
+            width: 10%;
+            box-sizing: border-box;
+            outline: none;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type='submit']:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        button[type='submit']:focus {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+
+        .about {
+            font-family: cursive;
+            font-style: inherit;
+            font-size: 16px;
+            color: white ;
+            text-align: left;
+            width: 100%;
+            white-space: pre-line;
+        }
+
+        .options-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 50px; /* Space between header and options */
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 50px;
+            padding: 20px;
+            max-width: 1200px;
+        }
+
+        .option-card {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 25px;
+            padding: 40px 30px;
+            width: 280px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .option-card:hover {
+            background: rgba(0, 0, 0, 0.85);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .option-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .option-card h2 {
+            color: #fff;
+            font-size: 24px;
+            margin: 0 0 15px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .option-card p {
+            color: #fff;
+            font-size: 16px;
+            margin: 0;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        
+
+        footer {
+            margin-top: 2cm;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+    <header>
+        <div class="company-name">DoubleBubble</div>
+            <a href="/signout" class="sign-out-btn">🚪 Sign Out</a>
+        <div class="welcome-text">Welcome to DoubleBubble Laundry Solutions</div>
+    </header>
+
+        <div class="options-container">
+        <div class="option-card" onclick="window.location.href='/laundry_cart'">
+            <div class="option-icon">🧺</div>
+            <h2>Book Laundry</h2>
+            <p>Place a new laundry order</p>
+        </div>
+        
+        <div class="option-card" onclick="window.location.href='/customer_delivery_status'">
+            <div class="option-icon">🚚</div>
+            <h2>My Orders & Delivery Status</h2>
+            <p>View your orders and track delivery status</p>
+        </div>
+        
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; DoubleBubble</p>
+    </footer>
+
+    
+</body>
+</html>
+    

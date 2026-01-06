@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laundry Cart</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: url('/static/images/360_F_627856916_7zdwmjnpaIV6T2FgIBJJzUmHVCcIqyz0.jpg') center/cover no-repeat;
+            background-size: cover;
+            width: 100%;
+            min-height: 100vh;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .message {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid;
+        }
+
+        .message.success {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .message.error {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border-color: #f44336;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .items-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .garment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .garment-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .garment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .garment-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .garment-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .garment-price {
+            font-size: 16px;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+
+        .quantity-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .quantity-input {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .address-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .address-selection {
+            width: 100%;
+        }
+
+        .address-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .address-header h3 {
+            color: #fff;
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .add-address-btn {
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .add-address-btn:hover {
+            background: #45a049;
+        }
+
+        .saved-addresses {
+            margin-bottom: 20px;
+        }
+
+        .address-card {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .address-card:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .address-card.selected {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .address-card.selected-pickup {
+            border-color: #2196F3;
+            background: rgba(33, 150, 243, 0.2);
+        }
+
+        .address-card.selected-delivery {
+            border-color: #FF9800;
+            background: rgba(255, 152, 0, 0.2);
+        }
+
+        .address-type {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .address-name {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .address-details {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .address-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .address-action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .address-action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .default-badge {
+            background: #FF9800;
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
+        .selected-addresses {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 20px;
+        }
+
+        .address-display {
+            margin-bottom: 15px;
+        }
+
+        .address-display label {
+            display: block;
+            margin-bottom: 8px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .address-display-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            color: #fff;
+            min-height: 40px;
+            font-size: 14px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 20px;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-button:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+
+        .loading {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .add-to-cart-btn {
+            margin-top: 10px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            background: #4CAF50;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #45a049;
+        }
+
+        .cart-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .cart-item-details {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .cart-item-price {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .cart-item-remove {
+            background: #f44336;
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .cart-item-remove:hover {
+            background: #d32f2f;
+        }
+
+        .cart-total {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4CAF50;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 10px;
+        }
+
+        .pickup-section {
+            margin: 20px 0;
+        }
+
+        .pickup-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .pickup-section select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .pickup-section select option {
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+        }
+        }
+
+        .order-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #2196F3;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .order-btn:hover {
+            background: #1976D2;
+        }
+
+        .order-btn:disabled {
+            background: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .error {
+            color: #ff4444;
+            padding: 10px;
+            background: rgba(255, 68, 68, 0.2);
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .success {
+            color: #4CAF50;
+            padding: 10px;
+            background: rgba(76, 175, 80, 0.2);
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .empty-cart {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .garment-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/cust_home_page" class="back-button">← Back to Home</a>
+
+    <div class="container">
+        <h1>🧺 Laundry Cart</h1>
+
+        <div id="message" style="display: none;"></div>
+
+        <div class="cart-layout">
+            <div class="items-section">
+                <h2 class="section-title">Choose Your Laundry Items</h2>
+
+                <div class="garment-grid" id="garment-grid">
+                    <!-- Garment items will be loaded here -->
+                </div>
+            </div>
+
+            <div class="cart-section">
+                <h2 class="section-title">Your Cart</h2>
+
+                <div id="cart-items">
+                    <div class="empty-cart">Your cart is empty</div>
+                </div>
+
+                <div class="cart-total" id="cart-total">
+                    Total: ₹0.00
+                </div>
+
+                <div class="address-section">
+                    <div class="address-selection">
+                        <div class="address-header">
+                            <h3>📍 Select Addresses</h3>
+                            <button type="button" class="add-address-btn" onclick="openAddAddressModal()">
+                                ➕ Add New Address
+                            </button>
+                        </div>
+
+                        <!-- Saved Addresses -->
+                        <div id="saved-addresses" class="saved-addresses">
+                            <div class="loading">Loading addresses...</div>
+                        </div>
+
+                        <!-- Selected Addresses Display -->
+                        <div class="selected-addresses">
+                            <div class="address-display">
+                                <label>Pickup Address:</label>
+                                <div id="pickup-address-display" class="address-display-box">
+                                    No pickup address selected
+                                </div>
+                            </div>
+
+                            <div class="address-display">
+                                <label>Delivery Address:</label>
+                                <div id="delivery-address-display" class="address-display-box">
+                                    No delivery address selected
+                                </div>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="same-as-pickup" checked>
+                                    Same as pickup address
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pickup-section">
+                    <label for="pickup-date">Select Pickup Date:</label>
+                    <select id="pickup-date">
+                        <!-- Pickup dates will be loaded here -->
+                    </select>
+                </div>
+
+                <button class="order-btn" id="order-btn" disabled>
+                    Place Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Modal -->
+    <div id="addressModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Address</h3>
+                <button class="close-button" onclick="closeAddressModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addressForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="address_type">Address Type:</label>
+                            <select id="address_type" name="address_type">
+                                <option value="Home">Home</option>
+                                <option value="Work">Work</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="full_name">Full Name:</label>
+                            <input type="text" id="full_name" name="full_name" maxlength="100" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number:</label>
+                        <input type="text" id="phone" name="phone" maxlength="10" pattern="[0-9]{10}"
+                               title="Please enter a valid 10-digit phone number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address_line1">Address Line 1:</label>
+                        <input type="text" id="address_line1" name="address_line1" maxlength="200" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address_line2">Address Line 2 (Optional):</label>
+                        <input type="text" id="address_line2" name="address_line2" maxlength="200">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City:</label>
+                            <input type="text" id="city" name="city" value="Mumbai" maxlength="50" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State:</label>
+                            <input type="text" id="state" name="state" value="Maharashtra" maxlength="50" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pincode">Pincode:</label>
+                            <input type="text" id="pincode" name="pincode" maxlength="6" pattern="[0-9]{6}"
+                                   title="Please enter a valid 6-digit pincode" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="landmark">Landmark (Optional):</label>
+                        <input type="text" id="landmark" name="landmark" maxlength="100">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="is_default" name="is_default">
+                            Set as default address
+                        </label>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeAddressModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Address</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Address management variables
+        let savedAddresses = [];
+        let selectedPickupAddress = null;
+        let selectedDeliveryAddress = null;
+        let editingAddressId = null;
+
+        const garments = [
+            { name: 'Shirt', price: 15, icon: '👔' },
+            { name: 'Pant', price: 20, icon: '👖' },
+            { name: 'Suit', price: 25, icon: '🤵' },
+            { name: 'Socks', price: 10, icon: '🧦' },
+            { name: 'Dress', price: 20, icon: '👗' },
+            { name: 'Jeans', price: 21, icon: '👖' },
+            { name: 'T-shirt', price: 12, icon: '👕' }
+        ];
+
+        let cartItems = {};
+        let pickupDates = [];
+
+        // Load garments and pickup dates on page load
+        window.addEventListener('load', () => {
+            loadGarments();
+            loadPickupDates();
+            loadCart();
+            loadAddresses();
+        });
+
+        function loadGarments() {
+            const grid = document.getElementById('garment-grid');
+
+            garments.forEach(garment => {
+                const card = document.createElement('div');
+                card.className = 'garment-card';
+
+                card.innerHTML = `
+                    <div class="garment-icon">${garment.icon}</div>
+                    <div class="garment-name">${garment.name}</div>
+                    <div class="garment-price">₹${garment.price}</div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="changeQuantity('${garment.name}', -1)">-</button>
+                        <input type="number" class="quantity-input" id="qty-${garment.name}" value="0" min="0" max="50">
+                        <button class="quantity-btn" onclick="changeQuantity('${garment.name}', 1)">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" onclick="addToCart('${garment.name}')">
+                        Add to Cart
+                    </button>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function loadPickupDates() {
+            fetch('/api/cart/pickup-dates')
+                .then(response => response.json())
+                .then(dates => {
+                    pickupDates = dates;
+                    const select = document.getElementById('pickup-date');
+
+                    dates.forEach(date => {
+                        const option = document.createElement('option');
+                        option.value = date;
+                        option.textContent = formatDate(date);
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading pickup dates:', error);
+                });
+        }
+
+        function formatDate(dateStr) {
+            const [day, month, year] = dateStr.split('-');
+            const date = new Date(year, month - 1, day);
+            const today = new Date();
+
+            if (date.toDateString() === today.toDateString()) {
+                return `Today (${dateStr})`;
+            } else {
+                const options = { weekday: 'short', month: 'short', day: 'numeric' };
+                return `${date.toLocaleDateString('en-US', options)} (${dateStr})`;
+            }
+        }
+
+        function changeQuantity(itemName, delta) {
+            const input = document.getElementById(`qty-${itemName}`);
+            let currentValue = parseInt(input.value) || 0;
+            let newValue = currentValue + delta;
+
+            if (newValue < 0) newValue = 0;
+            if (newValue > 50) newValue = 50;
+
+            input.value = newValue;
+        }
+
+        function addToCart(itemName) {
+            const quantity = parseInt(document.getElementById(`qty-${itemName}`).value) || 0;
+
+            if (quantity <= 0) {
+                showMessage('Please select a quantity greater than 0', 'error');
+                return;
+            }
+
+            fetch('/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    item_name: itemName,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`qty-${itemName}`).value = '0';
+                    loadCart();
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('Error adding item to cart', 'error');
+                console.error('Error:', error);
+            });
+        }
+
+        function loadCart() {
+            fetch('/api/cart/items')
+                .then(response => response.json())
+                .then(data => {
+                    cartItems = {};
+                    data.items.forEach(item => {
+                        cartItems[item.item_name] = item;
+                    });
+                    updateCartDisplay();
+                })
+                .catch(error => {
+                    console.error('Error loading cart:', error);
+                });
+        }
+
+        function updateCartDisplay() {
+            const cartDiv = document.getElementById('cart-items');
+            const totalDiv = document.getElementById('cart-total');
+            const orderBtn = document.getElementById('order-btn');
+
+            if (Object.keys(cartItems).length === 0) {
+                cartDiv.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+                totalDiv.textContent = 'Total: ₹0.00';
+                orderBtn.disabled = true;
+                return;
+            }
+
+            let cartHtml = '';
+            let total = 0;
+
+            Object.values(cartItems).forEach(item => {
+                total += parseFloat(item.total_price);
+                cartHtml += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.item_name}</div>
+                            <div class="cart-item-details">Qty: ${item.quantity} × ₹${item.unit_price}</div>
+                        </div>
+                        <div class="cart-item-price">₹${item.total_price}</div>
+                        <button class="cart-item-remove" onclick="removeFromCart('${item.item_name}')">
+                            Remove
+                        </button>
+                    </div>
+                `;
+            });
+
+            cartDiv.innerHTML = cartHtml;
+            totalDiv.textContent = `Total: ₹${total.toFixed(2)}`;
+
+            // Update order button state
+            updateOrderButton();
+        }
+
+        function removeFromCart(itemName) {
+            fetch(`/api/cart/remove/${encodeURIComponent(itemName)}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadCart();
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('Error removing item from cart', 'error');
+                console.error('Error:', error);
+            });
+        }
+
+        document.getElementById('order-btn').addEventListener('click', () => {
+            const pickupDate = document.getElementById('pickup-date').value;
+
+            if (!pickupDate) {
+                showMessage('Please select a pickup date', 'error');
+                return;
+            }
+
+            if (!selectedPickupAddress) {
+                showMessage('Please select a pickup address', 'error');
+                return;
+            }
+
+            if (!selectedDeliveryAddress) {
+                showMessage('Please select a delivery address', 'error');
+                return;
+            }
+
+            fetch('/api/cart/place-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    pickup_date: pickupDate,
+                    pickup_address: selectedPickupAddress.full_address,
+                    delivery_address: selectedDeliveryAddress.full_address
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    // Reload cart to clear it
+                    setTimeout(() => {
+                        loadCart();
+                        // Show order details
+                        showOrderDetails(data.order_details);
+                    }, 1000);
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('Error placing order', 'error');
+                console.error('Error:', error);
+            });
+        });
+
+        function showOrderDetails(orderDetails) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = 'success';
+            messageDiv.innerHTML = `
+                <strong>Order Placed Successfully!</strong><br>
+                <strong>Bill ID:</strong> ${orderDetails.bill_id}<br>
+                <strong>Pickup Date:</strong> ${orderDetails.pickup_date}<br>
+                <strong>Expected Delivery:</strong> ${orderDetails.delivery_date}<br>
+                <strong>Total Amount:</strong> ₹${orderDetails.total_amount}<br>
+                <br>
+                <em>You will receive a confirmation shortly.</em>
+            `;
+            messageDiv.style.display = 'block';
+
+            // Scroll to top to show the message
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==================== ADDRESS MANAGEMENT FUNCTIONS ====================
+
+        function loadAddresses() {
+            fetch('/api/addresses')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        savedAddresses = data.addresses;
+                        displayAddresses();
+                        loadDefaultAddresses();
+                    } else {
+                        console.error('Failed to load addresses:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading addresses:', error);
+                });
+        }
+
+        function displayAddresses() {
+            const container = document.getElementById('saved-addresses');
+
+            if (savedAddresses.length === 0) {
+                container.innerHTML = `
+                    <div class="address-card" onclick="openAddAddressModal()">
+                        <div class="address-type">Add New Address</div>
+                        <div class="address-details">Click here to add your first address</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            savedAddresses.forEach(address => {
+                const isSelectedPickup = selectedPickupAddress && selectedPickupAddress.id === address.id;
+                const isSelectedDelivery = selectedDeliveryAddress && selectedDeliveryAddress.id === address.id;
+                const selectedClass = isSelectedPickup ? 'selected-pickup' : (isSelectedDelivery ? 'selected-delivery' : '');
+
+                html += `
+                    <div class="address-card ${selectedClass}" onclick="selectAddress(${address.id}, 'both')">
+                        <div class="address-type">
+                            ${address.address_type}
+                            ${address.is_default ? '<span class="default-badge">Default</span>' : ''}
+                        </div>
+                        <div class="address-name">${address.full_name}</div>
+                        <div class="address-details">${address.full_address}</div>
+                        <div class="address-details">📞 ${address.phone}</div>
+                        <div class="address-actions">
+                            <button class="address-action-btn" onclick="event.stopPropagation(); editAddress(${address.id})">✏️</button>
+                            <button class="address-action-btn" onclick="event.stopPropagation(); deleteAddress(${address.id})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function selectAddress(addressId, type) {
+            const address = savedAddresses.find(addr => addr.id === addressId);
+            if (!address) return;
+
+            if (type === 'pickup' || type === 'both') {
+                selectedPickupAddress = address;
+                updateAddressDisplay('pickup', address);
+            }
+
+            if (type === 'delivery' || type === 'both') {
+                selectedDeliveryAddress = address;
+                updateAddressDisplay('delivery', address);
+            }
+
+            // Update same as pickup checkbox
+            const sameAsPickupCheckbox = document.getElementById('same-as-pickup');
+            sameAsPickupCheckbox.checked = (selectedPickupAddress && selectedDeliveryAddress &&
+                                          selectedPickupAddress.id === selectedDeliveryAddress.id);
+
+            displayAddresses();
+            updateOrderButton();
+        }
+
+        function updateAddressDisplay(type, address) {
+            const displayElement = document.getElementById(`${type}-address-display`);
+            if (address) {
+                displayElement.innerHTML = `
+                    <strong>${address.full_name}</strong><br>
+                    ${address.full_address}<br>
+                    📞 ${address.phone}
+                `;
+            } else {
+                displayElement.textContent = `No ${type} address selected`;
+            }
+        }
+
+        function loadDefaultAddresses() {
+            fetch('/api/addresses/default')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.address) {
+                        // Set default address for both pickup and delivery
+                        selectAddress(data.address.id, 'both');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading default address:', error);
+                });
+        }
+
+        function openAddAddressModal() {
+            editingAddressId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Address';
+            document.getElementById('addressForm').reset();
+            document.getElementById('city').value = 'Mumbai';
+            document.getElementById('state').value = 'Maharashtra';
+            document.getElementById('addressModal').style.display = 'flex';
+        }
+
+        function editAddress(addressId) {
+            const address = savedAddresses.find(addr => addr.id === addressId);
+            if (!address) return;
+
+            editingAddressId = addressId;
+            document.getElementById('modalTitle').textContent = 'Edit Address';
+
+            // Populate form with existing data
+            document.getElementById('address_type').value = address.address_type;
+            document.getElementById('full_name').value = address.full_name;
+            document.getElementById('phone').value = address.phone;
+            document.getElementById('address_line1').value = address.address_line1;
+            document.getElementById('address_line2').value = address.address_line2 || '';
+            document.getElementById('city').value = address.city;
+            document.getElementById('state').value = address.state;
+            document.getElementById('pincode').value = address.pincode;
+            document.getElementById('landmark').value = address.landmark || '';
+            document.getElementById('is_default').checked = address.is_default;
+
+            document.getElementById('addressModal').style.display = 'flex';
+        }
+
+        function closeAddressModal() {
+            document.getElementById('addressModal').style.display = 'none';
+            editingAddressId = null;
+        }
+
+        function deleteAddress(addressId) {
+            if (!confirm('Are you sure you want to delete this address?')) return;
+
+            fetch(`/api/addresses/${addressId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('Address deleted successfully!', 'success');
+                    loadAddresses();
+
+                    // Clear selection if deleted address was selected
+                    if (selectedPickupAddress && selectedPickupAddress.id === addressId) {
+                        selectedPickupAddress = null;
+                        updateAddressDisplay('pickup', null);
+                    }
+                    if (selectedDeliveryAddress && selectedDeliveryAddress.id === addressId) {
+                        selectedDeliveryAddress = null;
+                        updateAddressDisplay('delivery', null);
+                    }
+
+                    updateOrderButton();
+                } else {
+                    showMessage('Failed to delete address: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('Error deleting address: ' + error.message, 'error');
+            });
+        }
+
+        // Handle address form submission
+        document.getElementById('addressForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const addressData = {
+                address_type: formData.get('address_type'),
+                full_name: formData.get('full_name').trim(),
+                phone: formData.get('phone').trim(),
+                address_line1: formData.get('address_line1').trim(),
+                address_line2: formData.get('address_line2').trim(),
+                city: formData.get('city').trim(),
+                state: formData.get('state').trim(),
+                pincode: formData.get('pincode').trim(),
+                landmark: formData.get('landmark').trim(),
+                is_default: formData.get('is_default') === 'on'
+            };
+
+            // Validate required fields
+            if (!addressData.full_name || !addressData.phone || !addressData.address_line1 ||
+                !addressData.city || !addressData.state || !addressData.pincode) {
+                showMessage('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Validate phone and pincode
+            if (!/^[0-9]{10}$/.test(addressData.phone)) {
+                showMessage('Phone number must be 10 digits', 'error');
+                return;
+            }
+
+            if (!/^[0-9]{6}$/.test(addressData.pincode)) {
+                showMessage('Pincode must be 6 digits', 'error');
+                return;
+            }
+
+            const url = editingAddressId ? `/api/addresses/${editingAddressId}` : '/api/addresses';
+            const method = editingAddressId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(addressData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(editingAddressId ? 'Address updated successfully!' : 'Address added successfully!', 'success');
+                    closeAddressModal();
+                    loadAddresses();
+                } else {
+                    showMessage('Failed to save address: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('Error saving address: ' + error.message, 'error');
+            });
+        });
+
+        // Handle same as pickup checkbox
+        document.getElementById('same-as-pickup').addEventListener('change', function() {
+            if (this.checked && selectedPickupAddress) {
+                selectAddress(selectedPickupAddress.id, 'delivery');
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('addressModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeAddressModal();
+            }
+        });
+
+        function updateOrderButton() {
+            const orderBtn = document.getElementById('order-btn');
+            const hasItems = Object.keys(cartItems).length > 0;
+            const hasPickupAddress = selectedPickupAddress !== null;
+            const hasDeliveryAddress = selectedDeliveryAddress !== null;
+
+            orderBtn.disabled = !(hasItems && hasPickupAddress && hasDeliveryAddress);
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+

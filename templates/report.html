@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Report</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: url('/static/images/Leonardo_Phoenix.jpg') center/cover no-repeat;
+            background-size: cover;
+            width: 100%;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            width: 95%;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            min-width: 150px;
+        }
+
+        .button {
+            border: none;
+            font-family: cursive;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 12px 30px;
+            color: #fff;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .report-summary {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-item h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .summary-item p {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .orders-table thead {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .orders-table th {
+            padding: 15px;
+            text-align: left;
+            color: #fff;
+            font-weight: bold;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .orders-table td {
+            padding: 12px 15px;
+            color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .orders-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .total-revenue {
+            background: rgba(76, 175, 80, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border: 2px solid #4CAF50;
+        }
+
+        .total-revenue h2 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #fff;
+        }
+
+        .total-revenue p {
+            margin: 0;
+            font-size: 36px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .no-orders {
+            padding: 40px;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .error {
+            color: #ff4444;
+            padding: 10px;
+            background: rgba(255, 68, 68, 0.2);
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Monthly Revenue Report</h1>
+        
+        <div class="filter-section">
+            <div class="filter-group">
+                <label for="month">Select Month:</label>
+                <select id="month">
+                    <option value="">All Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="year">Select Year:</label>
+                <input type="number" id="year" min="2020" max="2030" value="2026">
+            </div>
+            
+            <button class="button" id="generate-report-btn">Generate Report</button>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="report-content" style="display: none;">
+            <div class="report-summary">
+                <div class="summary-item">
+                    <h3>Total Orders</h3>
+                    <p id="total-orders">0</p>
+                </div>
+                <div class="summary-item">
+                    <h3>Report Period</h3>
+                    <p id="report-period">-</p>
+                </div>
+            </div>
+
+            <div id="orders-table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Bill ID</th>
+                            <th>Customer ID</th>
+                            <th>Customer Name</th>
+                            <th>Pickup Date</th>
+                            <th>Delivery Date</th>
+                            <th>Bill Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-tbody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="total-revenue">
+                <h2>💰 Total Revenue</h2>
+                <p id="total-revenue">₹0.00</p>
+            </div>
+        </div>
+
+        <div id="no-orders" class="no-orders" style="display: none;">
+            No orders found for the selected period.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('generate-report-btn').addEventListener('click', () => {
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
+            const errorDiv = document.getElementById('error');
+            const reportContent = document.getElementById('report-content');
+            const noOrders = document.getElementById('no-orders');
+
+            // Clear previous content
+            errorDiv.style.display = 'none';
+            reportContent.style.display = 'none';
+            noOrders.style.display = 'none';
+
+            // Build query parameters
+            let url = '/monthly_report?';
+            if (month) {
+                url += `month=${month}&`;
+            }
+            if (year) {
+                url += `year=${year}`;
+            }
+
+            // Fetch report data
+            fetch(url)
+                .then((response) => {
+                    if (!response.ok) {
+                        return response.json().then((data) => {
+                            throw new Error(data.error || 'An error occurred.');
+                        });
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.orders && data.orders.length > 0) {
+                        displayReport(data);
+                        reportContent.style.display = 'block';
+                    } else {
+                        noOrders.style.display = 'block';
+                    }
+                })
+                .catch((error) => {
+                    errorDiv.textContent = error.message;
+                    errorDiv.style.display = 'block';
+                });
+        });
+
+        function displayReport(data) {
+            // Update summary
+            document.getElementById('total-orders').textContent = data.total_orders;
+            
+            const monthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June',
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            let periodText = 'All Time';
+            if (data.month) {
+                periodText = `${monthNames[data.month]} ${data.year}`;
+            } else if (data.year) {
+                periodText = `Year ${data.year}`;
+            }
+            document.getElementById('report-period').textContent = periodText;
+
+            // Update orders table
+            const tbody = document.getElementById('orders-tbody');
+            tbody.innerHTML = '';
+
+            data.orders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.bill_id}</td>
+                    <td>${order.customer_id}</td>
+                    <td>${order.customer_name}</td>
+                    <td>${order.order_pickup_date}</td>
+                    <td>${order.order_delivery_date}</td>
+                    <td>₹${parseFloat(order.bill_amount).toFixed(2)}</td>
+                    <td>${order.delivery_status}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update total revenue
+            document.getElementById('total-revenue').textContent = 
+                `₹${parseFloat(data.total_revenue).toFixed(2)}`;
+        }
+
+        // Load report on page load (all orders)
+        window.addEventListener('load', () => {
+            document.getElementById('generate-report-btn').click();
+        });
+    </script>
+</body>
+</html>
